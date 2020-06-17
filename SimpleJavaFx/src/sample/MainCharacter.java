@@ -47,8 +47,8 @@ public class MainCharacter extends Hero {
     public boolean collide(Actor object) {
         boolean collisionDetect = false;
 
-        if (main.main.spriteFrame.getBoundsInParent().intersects(object.getSpriteFrame().getBoundsInParent())) {
-            Shape intersection = SVGPath.intersect(main.main.getSpriteBound(), object.getSpriteBound());
+        if (this.spriteFrame.getBoundsInParent().intersects(object.getSpriteFrame().getBoundsInParent())) {
+            Shape intersection = SVGPath.intersect(this.getSpriteBound(), object.getSpriteBound());
             if (intersection.getBoundsInLocal().getWidth() != -1) {
                 collisionDetect = true;
             }
@@ -269,7 +269,7 @@ public class MainCharacter extends Hero {
         attackTimer = 0;
 
         if (main.enemy.spriteFrame.getBoundsInParent().intersects(ar.getBoundsInParent())) {
-            main.enemy.hurt(5);
+            main.enemy.hurt(1);
             System.out.println("Yamete :(");
             return;
         }

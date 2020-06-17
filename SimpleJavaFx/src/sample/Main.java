@@ -80,7 +80,8 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws IOException {
-        // create scene 0
+        // create scene0 ( menu)
+
         Button playGameButton = new Button("PLAY GAME");
         playGameButton.setFont(new Font("Candara Bold", 35.5));
 
@@ -97,9 +98,11 @@ public class Main extends Application {
         buttonContainer.getChildren().addAll(playGameButton, howToPlayButton, settingButton, quitButton);
         buttonContainer.setSpacing(50);
         buttonContainer.setAlignment(Pos.CENTER);
-        //buttonContainer = FXMLLoader.load(getClass().getResource("sample.fxml"));
+
         scene0 = new Scene(buttonContainer, WIDTH, HEIGHT, Color.BROWN);
-        // create scene 1 - choose difficulty
+
+        // create scene 1 - choose mode
+
         Button easyButton = new Button("EASY");
         easyButton.setFont(new Font("Candara Bold", 35.5));
 
@@ -111,10 +114,10 @@ public class Main extends Application {
         buttonContainer1.getChildren().addAll(easyButton, hardButton);
         buttonContainer1.setSpacing(50);
         buttonContainer1.setAlignment(Pos.CENTER);
-        //buttonContainer = FXMLLoader.load(getClass().getResource("sample.fxml"));
         scene1 = new Scene(buttonContainer1, WIDTH, HEIGHT, Color.BROWN);
         primaryStage.setTitle("RPG Game Team 17");
-        // setOnAction
+
+        // mode detail
         playGameButton.setOnAction(actionEvent -> {
             primaryStage.setScene(scene1);
         });
@@ -122,12 +125,16 @@ public class Main extends Application {
             primaryStage.setScene(scene);
         });
         hardButton.setOnAction(e->{
-            primaryStage.setScene(scene2);
+            primaryStage.setScene(scene);
             root1.getChildren().add(opEnemy.spriteFrame);
+            castDirector.addCurrentCast(opEnemy);
+            enemy.health = 20;
         });
         root = new Group();
         root1 = new Group();
+        //map1
         scene = new Scene(root, WIDTH, HEIGHT, Color.GREEN);
+        //map2
         scene2 = new Scene(root1, 750, 750, Color.RED);
         primaryStage.setScene(scene0);
         primaryStage.setResizable(false);
@@ -187,12 +194,7 @@ public class Main extends Application {
                 case J: Aleft = true; break;
                 case L: Aright = true; break;
                 case ENTER: {
-                    primaryStage.setScene(scene2);
-                    main1.spriteFrame.setTranslateX(50);
-                    main1.spriteFrame.setTranslateY(300);
-                    /*castDirector.addCurrentCast(
 
-                    );*/
                 }
                 break;
             }
@@ -912,16 +914,6 @@ public class Main extends Application {
     private void addGameActorNodes() {
         // add background
         root.getChildren().add(background);
-        // add prop
-        //root.getChildren().add(iPR0.spriteFrame);
-        //root.getChildren().add(iPR1.spriteFrame);
-        //root.getChildren().add(iPR2.spriteFrame);
-        //.getChildren().add(iPR4.spriteFrame);
-        //root.getChildren().add(iPR5.spriteFrame);
-        //root.getChildren().add(iPR6.spriteFrame);
-
-
-//Tung
 
         root.getChildren().add(iTW0.spriteFrame);
         root.getChildren().add(iTW1.spriteFrame);
@@ -969,7 +961,6 @@ public class Main extends Application {
         root.getChildren().add(iTW43.spriteFrame);
 
 
-//Yen
         root.getChildren().add(iA2.spriteFrame);
         root.getChildren().add(iA3.spriteFrame);
         root.getChildren().add(iA4.spriteFrame);
@@ -1061,7 +1052,7 @@ public class Main extends Application {
 
 
 
-        // add main
+        // add player and monster
         root.getChildren().add(enemy.spriteFrame);
         root.getChildren().add(main.spriteFrame);
         //root.getChildren().add(iCheese.spriteFrame);
@@ -1367,9 +1358,6 @@ public class Main extends Application {
         root1.getChildren().add(iOO1.spriteFrame);
         root1.getChildren().add(iOO2.spriteFrame);
         root1.getChildren().add(iOO3.spriteFrame);
-//            root1.getChildren().add(iOO4.spriteFrame);
-//            root1.getChildren().add(iOO5.spriteFrame);
-//            root1.getChildren().add(iOO6.spriteFrame);
         root1.getChildren().add(iOO7.spriteFrame);
         root1.getChildren().add(iOO8.spriteFrame);
         root1.getChildren().add(iOO81.spriteFrame);
@@ -1383,13 +1371,15 @@ public class Main extends Application {
         root1.getChildren().add(iOO13.spriteFrame);
         root1.getChildren().add(iOO14.spriteFrame);
         root1.getChildren().add(iOO15.spriteFrame);
+
+        // Add player
         root1.getChildren().add(main1.spriteFrame);
-        root1.getChildren().add(opEnemy.spriteFrame);
+        
     }
 
     private void createCastingDirection() {
         castDirector = new CastingDirector();
-        castDirector.addCurrentCast(iPR0, iPR1, main, enemy);
+        castDirector.addCurrentCast(iPR0, iPR1, main, main1, enemy);
 
         castDirector.addCurrentCast(iB3, iB4, iB5,iB6, iB7, iB9, iB10, iB11, iB12, iC2, iC8, iD3, iD4, iD6, iD11, iD12,
                 iE4, iE6, iE8, iE12, iF3, iF4, iF6, iF8, iF12, iG1, iG7, iG9, iG10, iG11, iH2, iH3, iH5, iH7, iH8, iH9,

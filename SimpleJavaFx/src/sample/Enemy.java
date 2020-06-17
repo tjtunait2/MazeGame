@@ -58,38 +58,7 @@ public class Enemy extends Actor{
             setXY();}
         moveEnemy(iX, iY);
 
-        /*if(!callAttack) {
-            if(attackCounter >= attackFrequency) {
-                attackCounter = 0;
-                spriteMoveR = 700;
-                spriteMoveL = -70;
-                randomLocation = randomNum.nextInt(attackBoundary);
-                iBagelLocation = (int) main.main.getiY();
-                bulletType = randomNum.nextBoolean();
-                if(bulletType) {
-                    spriteFrame.setTranslateY(randomLocation);
-                    randomOffset = randomLocation + 5;
-                } else {
-                    spriteFrame.setTranslateY(iBagelLocation);
-                    randomOffset = iBagelLocation + 5;
-                }
-                takeSides = randomNum.nextBoolean();
-                callAttack = true;
-            } else {
-                attackCounter++;
-            }
-        } else {
-            initiateAttack();
-        }
-        if(shootBullet) {
-            shootProjectile();
-            if (pauseCounter >= 60) {
-                launchIt = true;
-                pauseCounter = 0;
-            } else {
-                pauseCounter++;
-            }
-        }*/
+
     }
 
     private void moveEnemy(double x, double y) {
@@ -98,8 +67,8 @@ public class Enemy extends Actor{
     }
 
     public void setXY() {
-        if(main.main.IsInRange(main.enemy)) {
-            if (main.enemy.iY> main.main.iY) {
+        if(main.main.IsInRange(this) || main.main1.IsInRange(this) ) {
+            if (this.iY> main.main.iY || this.iY> main.main1.iY) {
 
                 dy -= acc;
                 if (dy < -maxSpeed) {
@@ -114,7 +83,7 @@ public class Enemy extends Actor{
                 }
             }
 
-            if (main.enemy.iY< main.main.iY) {
+            if (this.iY< main.main.iY || this.iY< main.main1.iY) {
 
                 dy += acc;
                 if (dy > maxSpeed) {
@@ -129,7 +98,7 @@ public class Enemy extends Actor{
                 }
             }
 
-            if (main.enemy.iX> main.main.iX) {
+            if (this.iX> main.main.iX || this.iX> main.main1.iX) {
 
                 dx -= acc;
                 if (dx < -maxSpeed) {
@@ -144,7 +113,7 @@ public class Enemy extends Actor{
                 }
             }
 
-            if (main.enemy.iX< main.main.iX) {
+            if (this.iX< main.main.iX || this.iX< main.main1.iX) {
 
                 dx += acc;
                 if (dx > maxSpeed) {
@@ -171,9 +140,10 @@ public class Enemy extends Actor{
     public boolean collide(Actor object) {
         boolean collisionDetect = false;
 
-        if (main.enemy.spriteFrame.getBoundsInParent().intersects(object.getSpriteFrame().getBoundsInParent())) {
-            Shape intersection = SVGPath.intersect(main.main.getSpriteBound(), object.getSpriteBound());
-            if (intersection.getBoundsInLocal().getWidth() != -1) {
+        if (this.spriteFrame.getBoundsInParent().intersects(object.getSpriteFrame().getBoundsInParent())) {
+            Shape intersection1 = SVGPath.intersect(main.main.getSpriteBound(), object.getSpriteBound());
+            Shape intersection2 = SVGPath.intersect(main.main1.getSpriteBound(), object.getSpriteBound());
+            if ((intersection1.getBoundsInLocal().getWidth() != -1) || (intersection2.getBoundsInLocal().getWidth() != -1)) {
                 collisionDetect = true;
             }
         }

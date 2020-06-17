@@ -26,7 +26,7 @@ public abstract class Actor {
     double w=100;
     double h=100;
     public static final int DEFAULT_HEALTH = 10;
-    protected int health;
+    protected int health =10;
     protected boolean active = true;
 
 
