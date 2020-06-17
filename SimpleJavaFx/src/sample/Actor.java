@@ -23,8 +23,12 @@ public abstract class Actor {
     protected boolean hasValu;
     protected boolean isFlipV;
     protected boolean isFlipH;
-    double w=200;
-    double h=200;
+    double w=100;
+    double h=100;
+    public static final int DEFAULT_HEALTH = 10;
+    protected int health;
+    protected boolean active = true;
+
 
     public Actor(String SVGdata, double xLocation, double yLocation, Image... spriteCels) {
         spriteBound = new SVGPath();
@@ -146,6 +150,21 @@ public abstract class Actor {
 
     public boolean isFlipH() {
         return isFlipH;
+    }
+
+    public boolean collide(Actor object) {
+        return false;
+    }
+
+    //combat stuff
+    public abstract void die();
+
+    public void hurt(int amt){
+        health -= amt;
+        if(health <= 0){
+            active = false;
+            die();
+        }
     }
 
     public void setIsFlipH(boolean isFlipH) {

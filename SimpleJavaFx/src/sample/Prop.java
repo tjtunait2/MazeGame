@@ -21,6 +21,9 @@ public class Prop extends Actor {
     public Prop clone(Prop prop, double x, double y){
         return new Prop(prop, x, y);
     }
+    public void die(){
+
+    }
 
 }
 

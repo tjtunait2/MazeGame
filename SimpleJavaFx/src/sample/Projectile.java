@@ -17,5 +17,8 @@ public class Projectile extends Actor {
     public void update() {
 
     }
+    public void die(){
+
+    }
 
 }

@@ -63,4 +63,9 @@ public class CastingDirector {
         CURRENT_CAST.removeAll(REMOVED_ACTORS);
         REMOVED_ACTORS.clear();
     }
+    public void removeAll(){
+        CURRENT_CAST.clear();
+        COLLIDE_CHECKLIST.clear();
+
+    }
 }

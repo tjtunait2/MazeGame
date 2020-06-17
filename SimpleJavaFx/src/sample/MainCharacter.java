@@ -1,6 +1,7 @@
 package sample;
 
 import javafx.scene.image.Image;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.SVGPath;
 import javafx.scene.shape.Shape;
 
@@ -19,6 +20,9 @@ public class MainCharacter extends Hero {
     private boolean animator = false;
     private byte framecounter = 0;
     private final byte runningspeed = 6;
+    private final long attackCooldown = 800;
+    private long lastAttackTimer;
+    private long attackTimer = attackCooldown;
 
     public MainCharacter(Main main, String SVGdata, double xLocation, double yLocation, Image... spriteCels) {
         super(SVGdata, xLocation, yLocation, spriteCels);
@@ -33,18 +37,19 @@ public class MainCharacter extends Hero {
         setImageState();
         moveMain(iX, iY);
         checkCollision();
-        if (collideProp){
+        if (collideProp) {
             setXYLocationIfCollide();
         }
+        checkAttack();
     }
 
     @Override
     public boolean collide(Actor object) {
         boolean collisionDetect = false;
 
-        if(main.main.spriteFrame.getBoundsInParent().intersects(object.getSpriteFrame().getBoundsInParent())) {
+        if (main.main.spriteFrame.getBoundsInParent().intersects(object.getSpriteFrame().getBoundsInParent())) {
             Shape intersection = SVGPath.intersect(main.main.getSpriteBound(), object.getSpriteBound());
-            if(intersection.getBoundsInLocal().getWidth() != -1) {
+            if (intersection.getBoundsInLocal().getWidth() != -1) {
                 collisionDetect = true;
             }
         }
@@ -53,17 +58,33 @@ public class MainCharacter extends Hero {
     }
 
     private void setXYLocation() {
-        if(main.isRight()) { iX += vX * 2; }
-        if(main.isLeft()) { iX -= vX * 2; }
-        if(main.isDown()) { iY += vY * 2; }
-        if(main.isUp()) { iY -= vY * 2; }
+        if (main.isRight()) {
+            iX += vX * 2;
+        }
+        if (main.isLeft()) {
+            iX -= vX * 2;
+        }
+        if (main.isDown()) {
+            iY += vY * 2;
+        }
+        if (main.isUp()) {
+            iY -= vY * 2;
+        }
     }
 
     private void setXYLocationIfCollide() {
-        if(main.isRight()) { iX -= vX * 2; }
-        if(main.isLeft()) { iX += vX * 2; }
-        if(main.isDown()) { iY -= vY * 2; }
-        if(main.isUp()) { iY += vY * 2; }
+        if (main.isRight()) {
+            iX -= vX * 2;
+        }
+        if (main.isLeft()) {
+            iX += vX * 2;
+        }
+        if (main.isDown()) {
+            iY -= vY * 2;
+        }
+        if (main.isUp()) {
+            iY += vY * 2;
+        }
     }
 
     private void setImageState() {
@@ -143,10 +164,18 @@ public class MainCharacter extends Hero {
                 }
             }
         }
-        if (main.isDown()) { spriteFrame.setImage(imageStates.get(6)); }
-        if (main.isUp()) { spriteFrame.setImage(imageStates.get(4)); }
-        if (main.iswKey()) { spriteFrame.setImage(imageStates.get(5)); }
-        if (main.issKey()) { spriteFrame.setImage(imageStates.get(8)); }
+        if (main.isDown()) {
+            spriteFrame.setImage(imageStates.get(6));
+        }
+        if (main.isUp()) {
+            spriteFrame.setImage(imageStates.get(4));
+        }
+        if (main.iswKey()) {
+            spriteFrame.setImage(imageStates.get(5));
+        }
+        if (main.issKey()) {
+            spriteFrame.setImage(imageStates.get(8));
+        }
     }
 
     private void moveMain(double x, double y) {
@@ -155,22 +184,37 @@ public class MainCharacter extends Hero {
     }
 
     private void setBoundaries() {
-        if (iX > rightBoundary) { iX = rightBoundary; }
-        if (iX < leftBoundary) { iX = leftBoundary; }
-        if (iY > bottomBoundary) { iY = bottomBoundary; }
-        if (iY < topBoundary) { iY = topBoundary; }
+        if (iX > rightBoundary) {
+            iX = rightBoundary;
+        }
+        if (iX < leftBoundary) {
+            iX = leftBoundary;
+        }
+        if (iY > bottomBoundary) {
+            iY = bottomBoundary;
+        }
+        if (iY < topBoundary) {
+            iY = topBoundary;
+        }
     }
 
     public void checkCollision() {
-        for(int i=0; i<main.castDirector.getCurrentCast().size(); i++) {
+        for (int i = 0; i < main.castDirector.getCurrentCast().size(); i++) {
             Actor object = main.castDirector.getCurrentCast().get(i);
 
-            if(collide(object)) {
+            if (collide(object)) {
                 if (object instanceof Prop) {
                     collideProp = true;
                 }
-                if (object instanceof Enemy || object instanceof Projectile){
-                    lifeSpan-= 100;
+                if (object instanceof Enemy || object instanceof Projectile) {
+                    collideProp = true;
+                    attackTimer += System.currentTimeMillis() - lastAttackTimer;
+                    lastAttackTimer = System.currentTimeMillis();
+                    if (attackTimer < attackCooldown) {
+                        return;
+                    }
+                    hurt(2);
+                    attackTimer = 0;
                 }
 
                /* main.castDirector.addToRemovedActors(object);
@@ -181,32 +225,64 @@ public class MainCharacter extends Hero {
         }
     }
 
-  /*  private void scoringEngine(Actor object) {
-        if(object instanceof Prop) {
-            main.gameScore -= 1;
-            main.playiSound0();
-        } else if(object instanceof PropV) {
-            main.gameScore -= 2;
-            main.playiSound1();
-        } else if(object instanceof PropH) {
-            main.gameScore -= 1;
-            main.playiSound2();
-        } else if(object instanceof PropB) {
-            main.gameScore -= 2;
-            main.playiSound3();
-        } else if(object instanceof Treasure) {
-            main.gameScore += 5;
-            main.playiSound4();
-        } else if(object.equals(main.iBullet)) {
-            main.gameScore -= 5;
-            main.playiSound5();
-        } else if(object.equals(main.iCheese)) {
-            main.gameScore += 5;
-            main.playiSound0();
-        } else if(object.equals(main.iBeagle)) {
-            main.gameScore += 10;
-            main.playiSound0();
+    //combat
+
+    private void checkAttack() {
+
+        //time cool down
+        attackTimer += System.currentTimeMillis() - lastAttackTimer;
+        lastAttackTimer = System.currentTimeMillis();
+        if (attackTimer < attackCooldown) {
+            return;
         }
-        main.scoreText.setText(String.valueOf(main.gameScore));
-    }*/
+
+        Rectangle ar = new Rectangle();
+        int arSize = 50;
+        ar.setWidth(arSize);
+        ar.setHeight(arSize);
+
+
+        if (main.isAright()) {
+            double arX = iX + 50;
+            double arY = iY;
+            ar.setX(arX);
+            ar.setY(arY);
+        } else if (main.isAleft()) {
+            double arX = iX - 50;
+            double arY = iY;
+            ar.setX(arX);
+            ar.setY(arY);
+        } else if (main.isAdown()) {
+            double arX = iX;
+            double arY = iY + 50;
+            ar.setX(arX);
+            ar.setY(arY);
+        } else if (main.isAup()) {
+            double arX = iX;
+            double arY = iY - 50;
+            ar.setX(arX);
+            ar.setY(arY);
+        } else {
+            return;
+        }
+
+        attackTimer = 0;
+
+        if (main.enemy.spriteFrame.getBoundsInParent().intersects(ar.getBoundsInParent())) {
+            main.enemy.hurt(5);
+            System.out.println("Yamete :(");
+            return;
+        }
+        if (main.opEnemy.spriteFrame.getBoundsInParent().intersects(ar.getBoundsInParent())) {
+            main.opEnemy.hurt(3);
+            System.out.println("Yamete :(");
+            return;
+        }
+    }
+
+    @Override
+    public void die(){
+        System.out.println("You lose!");
+    }
+
 }
